@@ -18,9 +18,13 @@ const Home =()=> {
         <main>
             <form action={addIngredient} className="add-ingredient-form">
                 <h1>Find Your Perfect Recipe</h1>
+                <p>
+                    Enter ingredients you have on hand to find recipes that use them.
+                    You can add multiple ingredients, and we'll help you find the perfect recipe!
+                </p>
                 <input
                     type="text"
-                    placeholder="e.g. oregano"
+                    placeholder="What ingredients do you have?"
                     aria-label="Add ingredient"
                     name="ingredient"
                 />
