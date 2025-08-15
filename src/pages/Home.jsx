@@ -15,10 +15,10 @@ const Home =()=> {
     
 
     return (
-        <main>
+        <main className='home'>
             <form action={addIngredient} className="add-ingredient-form">
-                <h1>Find Your Perfect Recipe</h1>
-                <p>
+                <h1 className='form-title'>Find Your Perfect Recipe</h1>
+                <p className='form-text'>
                     Enter ingredients you have on hand to find recipes that use them.
                     You can add multiple ingredients, and we'll help you find the perfect recipe!
                 </p>
@@ -27,10 +27,11 @@ const Home =()=> {
                     placeholder="What ingredients do you have?"
                     aria-label="Add ingredient"
                     name="ingredient"
+                    className='form-input'
                 />
-                <button>Add ingredient</button>
+                <button className='add-btn'>Add ingredient</button>
             </form>
-            {ingredients.length > 0 && <section>
+            {ingredients.length > 3 && <section className='section'>
                 <h2>Ingredients on hand:</h2>
                 <ul className="ingredients-list" aria-live="polite">{ingredientsListItems}</ul>
                 <div className="get-recipe-container">
@@ -38,7 +39,7 @@ const Home =()=> {
                         <h3>Ready for a recipe?</h3>
                         <p>Generate a recipe from your list of ingredients.</p>
                     </div>
-                    <button>Get a recipe</button>
+                    <button className='search-btn'>Get a recipe</button>
                 </div>
             </section>}
         </main>
