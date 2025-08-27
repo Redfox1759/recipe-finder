@@ -8,8 +8,10 @@ export default function App() {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [saveMessage, setSaveMessage] = useState('');
 
-  
+  // Spoonacular API key is not required for the sample functionality
+  // but would be needed for a live app.
   const SPOONACULAR_API_KEY = "8f379ff6a2804f6dbb09bc1494a7c98e";
 
   // Function to handle adding a new ingredient to the list
@@ -20,6 +22,7 @@ export default function App() {
       setSearchInput(""); // Clear the input field after adding
       setRecipes([]); // Reset the recipes list for a new search
       setSelectedRecipe(null); // Clear any selected recipe
+      setSaveMessage(''); // Clear any save message
     }
   };
   
@@ -30,10 +33,10 @@ export default function App() {
     ));
     setRecipes([]); // Reset the recipes list
     setSelectedRecipe(null); // Clear any selected recipe
+    setSaveMessage(''); // Clear any save message
   };
 
   // Function to search for recipes based on the ingredients list
-  // This is the first API call to get a list of matching recipes
   const searchRecipes = useCallback(async () => {
     if (ingredients.length === 0) {
       setRecipes([]);
@@ -41,7 +44,8 @@ export default function App() {
     }
     setLoading(true);
     setError(null);
-    setSelectedRecipe(null); // Clear any previously selected recipe
+    setSelectedRecipe(null);
+    setSaveMessage('');
 
     try {
       const ingredientString = ingredients.join(", ");
@@ -62,10 +66,10 @@ export default function App() {
   }, [ingredients, SPOONACULAR_API_KEY]);
 
   // Function to get the full details for a single recipe
-  // This is the second API call, triggered by a user's click
   const getRecipeDetails = useCallback(async (id) => {
     setLoading(true);
     setError(null);
+    setSaveMessage('');
     try {
       const res = await fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${SPOONACULAR_API_KEY}`);
       if (!res.ok) {
@@ -80,6 +84,27 @@ export default function App() {
       setLoading(false);
     }
   }, [SPOONACULAR_API_KEY]);
+
+  // Function to save the current recipe to local storage
+  const handleSaveFavorite = () => {
+    if (selectedRecipe) {
+      try {
+        const existingFavorites = JSON.parse(localStorage.getItem('favoriteRecipes')) || [];
+        const isAlreadySaved = existingFavorites.some(recipe => recipe.id === selectedRecipe.id);
+        
+        if (isAlreadySaved) {
+          setSaveMessage('This recipe is already in your favorites!');
+        } else {
+          const newFavorites = [...existingFavorites, selectedRecipe];
+          localStorage.setItem('favoriteRecipes', JSON.stringify(newFavorites));
+          setSaveMessage('Recipe added to favorites!');
+        }
+      } catch (e) {
+        console.error("Failed to save to local storage:", e);
+        setSaveMessage('Failed to save the recipe. Please try again.');
+      }
+    }
+  };
 
   // Helper function to render the ingredients with measures from the API data
   const renderIngredients = (recipeData) => {
@@ -99,9 +124,9 @@ export default function App() {
 
   // Main render
   return (
-    <main className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
-      <div className="mb-8">
-        <form onSubmit={handleAddIngredient} className=" dark:bg-gray-200 p-6 sm:p-8  shadow-lg transition-all duration-300 mt-auto rounded-3xl max-w-3xl mx-auto">
+    <main className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans p-4 sm:p-6 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        <form onSubmit={handleAddIngredient} className= "dark:bg-gray-800 p-6 sm:p-8 shadow-lg transition-all duration-300 rounded-3xl mb-8">
           <h1 className="text-3xl sm:text-4xl text-center font-bold text-gray-800 dark:text-gray-100 mb-2">Find Your Perfect Recipe</h1>
           <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
             Enter ingredients you have on hand and click "Add".
@@ -123,7 +148,7 @@ export default function App() {
         </form>
 
         {ingredients.length > 0 && (
-          <section className="mt-8 bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-lg">
+          <section className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-lg mb-8">
             <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Ingredients on hand:</h2>
             <ul className="flex flex-wrap gap-2 mb-6">
               {ingredients.map((ingredient, index) => (
@@ -153,7 +178,7 @@ export default function App() {
           </section>
         )}
         
-        <section className="mt-8">
+        <section>
           {loading && (
             <div className="flex justify-center items-center h-48">
               <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
@@ -161,13 +186,19 @@ export default function App() {
           )}
 
           {error && (
-            <div className="bg-red-100 text-red-700 p-4 rounded-lg text-center">
+            <div className="bg-red-100 text-red-700 p-4 rounded-lg text-center mb-8">
               <p>{error}</p>
             </div>
           )}
 
+          {saveMessage && (
+            <div className="bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-200 p-4 rounded-lg text-center mb-8">
+              <p>{saveMessage}</p>
+            </div>
+          )}
+
           {!loading && !error && recipes.length > 0 && !selectedRecipe && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {recipes.map(recipe => (
                 <article key={recipe.id} className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg transform transition-all duration-300 hover:scale-[1.02]">
                   <h3 className="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">{recipe.title}</h3>
@@ -189,9 +220,17 @@ export default function App() {
 
           {!loading && !error && selectedRecipe && (
             <article className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-lg">
-              <button onClick={() => setSelectedRecipe(null)} className="mb-4 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                &larr; Back to Results
-              </button>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                <button onClick={() => setSelectedRecipe(null)} className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                  &larr; Back to Results
+                </button>
+                <button 
+                  onClick={handleSaveFavorite} 
+                  className="px-4 py-2 bg-pink-500 text-white rounded-full font-semibold hover:bg-pink-600 transition-colors w-full sm:w-auto text-center"
+                >
+                  Add to Favorites
+                </button>
+              </div>
               <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">{selectedRecipe.title}</h2>
               <img
                 src={selectedRecipe.image}
@@ -222,6 +261,4 @@ export default function App() {
     </main>
   );
 }
-
-
 
