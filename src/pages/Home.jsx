@@ -1,87 +1,227 @@
-import React from 'react'
+import { useState, useCallback } from 'react';
 
-const Home =()=> {
+// Main application component
+export default function App() {
+  const [ingredients, setIngredients] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [recipes, setRecipes] = useState([]);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    const [ingredients, setIngredients] = React.useState([])
-    const [recipeShow, setRecipeShown] = React.useState(false)
+  
+  const SPOONACULAR_API_KEY = "8f379ff6a2804f6dbb09bc1494a7c98e";
 
-    const ingredientsListItems = ingredients.map(ingredient => (
-        <li key={ingredient}>{ingredient}</li>
-    ))
-
-    function addIngredient(formData) {
-        const newIngredient = formData.get("ingredient")
-        setIngredients(prevIngredients => [...prevIngredients, newIngredient])
+  // Function to handle adding a new ingredient to the list
+  const handleAddIngredient = (e) => {
+    e.preventDefault();
+    if (searchInput.trim() !== "") {
+      setIngredients(prevIngredients => [...prevIngredients, searchInput.trim()]);
+      setSearchInput(""); // Clear the input field after adding
+      setRecipes([]); // Reset the recipes list for a new search
+      setSelectedRecipe(null); // Clear any selected recipe
     }
+  };
+  
+  // Function to remove an ingredient from the list
+  const handleRemoveIngredient = (ingredientToRemove) => {
+    setIngredients(prevIngredients => prevIngredients.filter(
+      ingredient => ingredient !== ingredientToRemove
+    ));
+    setRecipes([]); // Reset the recipes list
+    setSelectedRecipe(null); // Clear any selected recipe
+  };
 
-    function getRecipe(){
-        setRecipeShown( prev => !prev)
+  // Function to search for recipes based on the ingredients list
+  // This is the first API call to get a list of matching recipes
+  const searchRecipes = useCallback(async () => {
+    if (ingredients.length === 0) {
+      setRecipes([]);
+      return;
     }
-    
+    setLoading(true);
+    setError(null);
+    setSelectedRecipe(null); // Clear any previously selected recipe
 
+    try {
+      const ingredientString = ingredients.join(", ");
+      const res = await fetch(`https://api.spoonacular.com/recipes/findByIngredients?ingredients=${encodeURIComponent(ingredientString)}&number=10&apiKey=${SPOONACULAR_API_KEY}`);
+      
+      if (!res.ok) {
+        throw new Error('Failed to fetch recipes from Spoonacular API. The API key might be invalid.');
+      }
+      
+      const data = await res.json();
+      setRecipes(data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch recipes. Please ensure your Spoonacular API key is valid and try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [ingredients, SPOONACULAR_API_KEY]);
+
+  // Function to get the full details for a single recipe
+  // This is the second API call, triggered by a user's click
+  const getRecipeDetails = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${SPOONACULAR_API_KEY}`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch recipe details.');
+      }
+      const data = await res.json();
+      setSelectedRecipe(data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch recipe details.");
+    } finally {
+      setLoading(false);
+    }
+  }, [SPOONACULAR_API_KEY]);
+
+  // Helper function to render the ingredients with measures from the API data
+  const renderIngredients = (recipeData) => {
+    if (!recipeData.extendedIngredients) return null;
     return (
-        <main className='home'>
-            <form action={addIngredient} className="add-ingredient-form">
-                <h1 className='form-title'>Find Your Perfect Recipe</h1>
-                <p className='form-text'>
-                    Enter ingredients you have on hand to find recipes that use them.
-                    You can add multiple ingredients, and we'll help you find the perfect recipe!
-                </p>
-                <input
-                    type="text"
-                    placeholder="What ingredients do you have?"
-                    aria-label="Add ingredient"
-                    name="ingredient"
-                    className='form-input'
-                />
-                <button className='add-btn'>Add ingredient</button>
-            </form>
-            {ingredients.length > 0 && <section className='section'>
-                <h2>Ingredients on hand:</h2>
-                <ul className="ingredients-list" aria-live="polite">{ingredientsListItems}</ul>
-                {ingredients.length > 3 && <div className="get-recipe-container">
-                    <div>
-                        <h3>Ready for a recipe?</h3>
-                        <p>Generate a recipe from your list of ingredients.</p>
-                    </div>
-                    <button className='search-btn' onClick={getRecipe}>Get a recipe</button>
-                </div>}
-            </section>}
+      <ul className="list-disc list-inside space-y-2">
+        {recipeData.extendedIngredients.map((item) => (
+          <li key={item.id}>
+            <span className="font-semibold text-gray-800 dark:text-gray-200">
+              {item.original}
+            </span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
-            { recipeShow && <section>
-                <h2>Chef Claude Recommends:</h2>
-                <article className="suggested-recipe-container" aria-live="polite">
-                    <p>Based on the ingredients you have available, I would recommend making a simple a delicious <strong>Beef Bolognese Pasta</strong>. Here is the recipe:</p>
-                    <h3>Beef Bolognese Pasta</h3>
-                    <strong>Ingredients:</strong>
-                    <ul>
-                        <li>1 lb. ground beef</li>
-                        <li>1 onion, diced</li>
-                        <li>3 cloves garlic, minced</li>
-                        <li>2 tablespoons tomato paste</li>
-                        <li>1 (28 oz) can crushed tomatoes</li>
-                        <li>1 cup beef broth</li>
-                        <li>1 teaspoon dried oregano</li>
-                        <li>1 teaspoon dried basil</li>
-                        <li>Salt and pepper to taste</li>
-                        <li>8 oz pasta of your choice (e.g., spaghetti, penne, or linguine)</li>
-                    </ul>
-                    <strong>Instructions:</strong>
-                    <ol>
-                        <li>Bring a large pot of salted water to a boil for the pasta.</li>
-                        <li>In a large skillet or Dutch oven, cook the ground beef over medium-high heat, breaking it up with a wooden spoon, until browned and cooked through, about 5-7 minutes.</li>
-                        <li>Add the diced onion and minced garlic to the skillet and cook for 2-3 minutes, until the onion is translucent.</li>
-                        <li>Stir in the tomato paste and cook for 1 minute.</li>
-                        <li>Add the crushed tomatoes, beef broth, oregano, and basil. Season with salt and pepper to taste.</li>
-                        <li>Reduce the heat to low and let the sauce simmer for 15-20 minutes, stirring occasionally, to allow the flavors to meld.</li>
-                        <li>While the sauce is simmering, cook the pasta according to the package instructions. Drain the pasta and return it to the pot.</li>
-                        <li>Add the Bolognese sauce to the cooked pasta and toss to combine.</li>
-                        <li>Serve hot, garnished with additional fresh basil or grated Parmesan cheese if desired.</li>
-                    </ol>
+  // Main render
+  return (
+    <main className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+      <div className="mb-8">
+        <form onSubmit={handleAddIngredient} className=" dark:bg-gray-200 p-6 sm:p-8  shadow-lg transition-all duration-300 mt-auto rounded-3xl max-w-3xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl text-center font-bold text-gray-800 dark:text-gray-100 mb-2">Find Your Perfect Recipe</h1>
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+            Enter ingredients you have on hand and click "Add".
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 mb-4">
+            <input
+              type="text"
+              placeholder="What ingredients do you have?"
+              aria-label="Add ingredient"
+              name="ingredient"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="flex-grow py-3 px-5 rounded-full border-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:border-blue-500 transition-colors"
+            />
+            <button type="submit" className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors">
+              Add
+            </button>
+          </div>
+        </form>
+
+        {ingredients.length > 0 && (
+          <section className="mt-8 bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-lg">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Ingredients on hand:</h2>
+            <ul className="flex flex-wrap gap-2 mb-6">
+              {ingredients.map((ingredient, index) => (
+                <li 
+                  key={index} 
+                  className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-full flex items-center gap-2 text-gray-700 dark:text-gray-300"
+                >
+                  {ingredient}
+                  <button 
+                    onClick={() => handleRemoveIngredient(ingredient)}
+                    className="text-red-500 hover:text-red-700"
+                    aria-label={`Remove ${ingredient}`}
+                  >
+                    &times;
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="flex justify-center">
+              <button 
+                onClick={searchRecipes}
+                className="px-8 py-3 bg-green-600 text-white rounded-full font-bold hover:bg-green-700 transition-colors"
+              >
+                Find Recipes
+              </button>
+            </div>
+          </section>
+        )}
+        
+        <section className="mt-8">
+          {loading && (
+            <div className="flex justify-center items-center h-48">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-100 text-red-700 p-4 rounded-lg text-center">
+              <p>{error}</p>
+            </div>
+          )}
+
+          {!loading && !error && recipes.length > 0 && !selectedRecipe && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recipes.map(recipe => (
+                <article key={recipe.id} className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg transform transition-all duration-300 hover:scale-[1.02]">
+                  <h3 className="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">{recipe.title}</h3>
+                  <img
+                    src={recipe.image}
+                    alt={recipe.title}
+                    className="w-full h-48 object-cover rounded-xl mb-4"
+                  />
+                  <button
+                    onClick={() => getRecipeDetails(recipe.id)}
+                    className="w-full px-6 py-2 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors"
+                  >
+                    View Recipe
+                  </button>
                 </article>
-            </section>}
-        </main>
-    )
+              ))}
+            </div>
+          )}
+
+          {!loading && !error && selectedRecipe && (
+            <article className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-lg">
+              <button onClick={() => setSelectedRecipe(null)} className="mb-4 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                &larr; Back to Results
+              </button>
+              <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">{selectedRecipe.title}</h2>
+              <img
+                src={selectedRecipe.image}
+                alt={selectedRecipe.title}
+                className="w-full h-auto rounded-2xl mb-6 shadow-md"
+              />
+
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-2xl font-bold mb-3 text-gray-800 dark:text-gray-100">Ingredients</h3>
+                  {renderIngredients(selectedRecipe)}
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold mb-3 text-gray-800 dark:text-gray-100">Instructions</h3>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: selectedRecipe.instructions }}></p>
+                </div>
+              </div>
+            </article>
+          )}
+
+          {!loading && !error && ingredients.length > 0 && recipes.length === 0 && !selectedRecipe && (
+            <div className="text-center text-lg text-gray-500 mt-8">
+              No recipes found with these ingredients.
+            </div>
+          )}
+        </section>
+      </div>
+    </main>
+  );
 }
 
-export default Home
+
+

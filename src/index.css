@@ -1,10 +1,4 @@
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  color: black;
-  font-family: 'Roboto';
-}
+@import "tailwindcss";
 
 /* .App{
   height: 100vh;
@@ -41,6 +35,9 @@
 }
 .title {
   margin-left: 10px;
+  font-weight: bold;
+  color: #333;
+  font-size: 1.2rem;
 }
 .nav {
   list-style: none;
@@ -60,91 +57,5 @@
 
 main{
   justify-items: center;
-}
-
-.home{
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 20px;
-  background-color: #f9f9f9;
 }
-
-/* .get-recipe-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 8px;
-    background: #F0EFEB;
-    padding: 10px 28px;
-} */
-
-.add-ingredient-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 20px;
-  box-shadow: 0px 1px 2px 0px;
-}
-
-.form-title{
-  color:#FAFAF8;
-
-}
-
-.form-text{
-  color:#FAFAF8;
-}
-
-.form-input{
-  width: 240px;
-  height: 38px;
-  margin: 10px;
-  border-radius: 10px;
-  border: none;
-  padding-left: 10px;
-}
-
-.add-btn{
-  border: 1px solid ;
-  border-radius: 6px;
-  background: transparent;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
-  color: #FAFAF8;
-  padding: 9px 17px;
-  font-family: Inter, sans-serif;
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-.section{
-  margin: 30px auto;
-}
-
-.get-recipe-container h3 {
-    font-size: 1.125rem;
-    font-weight: 500;
-    line-height: 24px;
-}
-
-.get-recipe-container p {
-    color: #6B7280;
-    font-size: 0.875rem;
-    line-height: 20px;
-}
-
-.get-recipe-container button {
-    border: none;
-    border-radius: 6px;
-    background: #000000;
-    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
-    color: #FAFAF8;
-    padding: 9px 17px;
-    font-family: Inter, sans-serif;
-    font-size: 0.875rem;
-    cursor: pointer;
-}
-
