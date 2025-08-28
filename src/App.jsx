@@ -11,9 +11,9 @@ import './index.css'
 function App() {
   
   return (
-    < div className="App mx-auto">
+    < div className="App mx-auto bg-gray-900">
       <Navbar />
-      <div className='bg-gray-900'>
+      <div>
         <Routes basename="/recipe-finder">
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -21,7 +21,6 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-        
       <Footer />
     </div>
   )

@@ -1,5 +1,4 @@
-import { useState, useCallback } from 'react';
-
+import { useState, useCallback, useEffect } from 'react';
 
 export default function App() {
   const [ingredients, setIngredients] = useState([]);
@@ -10,32 +9,38 @@ export default function App() {
   const [error, setError] = useState(null);
   const [saveMessage, setSaveMessage] = useState('');
 
-
   const SPOONACULAR_API_KEY = "8f379ff6a2804f6dbb09bc1494a7c98e";
 
-  // Function to handle adding a new ingredient to the list
+
+  useEffect(() => {
+    if (saveMessage) {
+      const timer = setTimeout(() => {
+        setSaveMessage('');
+      }, 1000); //
+      return () => clearTimeout(timer);
+    }
+  }, [saveMessage]);
+
   const handleAddIngredient = (e) => {
     e.preventDefault();
     if (searchInput.trim() !== "") {
       setIngredients(prevIngredients => [...prevIngredients, searchInput.trim()]);
-      setSearchInput(""); // Clear the input field after adding
-      setRecipes([]); // Reset the recipes list for a new search
-      setSelectedRecipe(null); // Clear any selected recipe
-      setSaveMessage(''); // Clear any save message
+      setSearchInput("");
+      setRecipes([]);
+      setSelectedRecipe(null);
+      setSaveMessage('');
     }
   };
   
- 
   const handleRemoveIngredient = (ingredientToRemove) => {
     setIngredients(prevIngredients => prevIngredients.filter(
       ingredient => ingredient !== ingredientToRemove
     ));
-    setRecipes([]); // Reset the recipes list
-    setSelectedRecipe(null); // Clear any selected recipe
-    setSaveMessage(''); // Clear any save message
+    setRecipes([]);
+    setSelectedRecipe(null);
+    setSaveMessage('');
   };
 
-  
   const searchRecipes = useCallback(async () => {
     if (ingredients.length === 0) {
       setRecipes([]);
@@ -64,7 +69,6 @@ export default function App() {
     }
   }, [ingredients, SPOONACULAR_API_KEY]);
 
-
   const getRecipeDetails = useCallback(async (id) => {
     setLoading(true);
     setError(null);
@@ -84,7 +88,6 @@ export default function App() {
     }
   }, [SPOONACULAR_API_KEY]);
 
-  // Function to save the current recipe to local storage
   const handleSaveFavorite = () => {
     if (selectedRecipe) {
       try {
@@ -105,7 +108,6 @@ export default function App() {
     }
   };
 
-  // Helper function to render the ingredients with measures from the API data
   const renderIngredients = (recipeData) => {
     if (!recipeData.extendedIngredients) return null;
     return (
@@ -121,7 +123,6 @@ export default function App() {
     );
   };
 
-  // Main render
   return (
     <main className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans p-4 sm:p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
@@ -260,4 +261,3 @@ export default function App() {
     </main>
   );
 }
-
