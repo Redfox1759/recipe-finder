@@ -11,14 +11,17 @@ import './index.css'
 function App() {
   
   return (
-    < div className="App">
+    < div className="App mx-auto">
       <Navbar />
+      <div className='bg-gray-900'>
         <Routes basename="/recipe-finder">
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+      </div>
+        
       <Footer />
     </div>
   )
