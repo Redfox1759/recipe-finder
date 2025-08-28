@@ -1,15 +1,13 @@
-import React from 'react'
+import React from 'react';
 
 const Footer = () => {
   return (
-    <div>
-      <div>
-        <p className="footer-text" style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f8f9fa' }}>
-          &copy; {new Date().getFullYear()} Recipe Finder. All rights reserved.
-        </p>
-      </div>
-    </div>
-  )
-}
+    <footer className="bg-gray-100 text-center p-4">
+      <p className="text-gray-600">
+        &copy; {new Date().getFullYear()} Recipe Finder. All rights reserved.
+      </p>
+    </footer>
+  );
+};
 
-export default Footer
+export default Footer;

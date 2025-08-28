@@ -13,15 +13,12 @@ function App() {
   return (
     < div className="App">
       <Navbar />
-      <div className='min-h-screen'>
         <Routes basename="/recipe-finder">
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </div>
-     
       <Footer />
     </div>
   )

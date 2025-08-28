@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-// Main application component
+
 export default function App() {
   const [ingredients, setIngredients] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -10,8 +10,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [saveMessage, setSaveMessage] = useState('');
 
-  // Spoonacular API key is not required for the sample functionality
-  // but would be needed for a live app.
+
   const SPOONACULAR_API_KEY = "8f379ff6a2804f6dbb09bc1494a7c98e";
 
   // Function to handle adding a new ingredient to the list
@@ -26,7 +25,7 @@ export default function App() {
     }
   };
   
-  // Function to remove an ingredient from the list
+ 
   const handleRemoveIngredient = (ingredientToRemove) => {
     setIngredients(prevIngredients => prevIngredients.filter(
       ingredient => ingredient !== ingredientToRemove
@@ -36,7 +35,7 @@ export default function App() {
     setSaveMessage(''); // Clear any save message
   };
 
-  // Function to search for recipes based on the ingredients list
+  
   const searchRecipes = useCallback(async () => {
     if (ingredients.length === 0) {
       setRecipes([]);
@@ -65,7 +64,7 @@ export default function App() {
     }
   }, [ingredients, SPOONACULAR_API_KEY]);
 
-  // Function to get the full details for a single recipe
+
   const getRecipeDetails = useCallback(async (id) => {
     setLoading(true);
     setError(null);

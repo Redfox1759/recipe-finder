@@ -8,7 +8,9 @@ const Favorites = () => {
 
   const [favorites, setFavorites] = useState(myData || [])
 
-  
+  console.log(favorites)
+
+
 
   return (
     <div>
