@@ -9,7 +9,9 @@ export default function App() {
   const [error, setError] = useState(null);
   const [saveMessage, setSaveMessage] = useState('');
 
-  const SPOONACULAR_API_KEY = "8f379ff6a2804f6dbb09bc1494a7c98e";
+  const SPOONACULAR_API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY;
+
+
 
 
   useEffect(() => {
