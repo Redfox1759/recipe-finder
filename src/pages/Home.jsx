@@ -134,7 +134,7 @@ export default function App() {
           <div className="flex flex-col sm:flex-row gap-4 mb-4">
             <input
               type="text"
-              placeholder="What ingredients do you have?"
+              placeholder="What ingredient do you have?"
               aria-label="Add ingredient"
               name="ingredient"
               value={searchInput}
