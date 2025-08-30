@@ -129,7 +129,7 @@ export default function App() {
         <form onSubmit={handleAddIngredient} className= "dark:bg-gray-800 p-6 sm:p-8 shadow-lg transition-all duration-300 rounded-3xl mb-8">
           <h1 className="text-3xl sm:text-4xl text-center font-bold text-gray-800 dark:text-gray-100 mb-2">Find Your Perfect Recipe</h1>
           <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-            Enter ingredients you have on hand and click "Add".
+            Enter ingredient you have on hand and click "Add".
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mb-4">
             <input
