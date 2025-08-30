@@ -65,9 +65,9 @@ The app will be available at http://localhost:5173/ (if you’re using Vite).
 
 💡 Usage
 
-Search Recipes: Enter one or more ingredients (e.g., chicken, rice, garlic) in the search bar.
+Search Recipes: Enter one ingredient (e.g., chicken, rice, garlic) in the search bar.
 
-Save Favorites: Click the ❤️ icon on recipe cards to add them to your favorites.
+Save Favorites: Click the add to favorites on recipe cards to add them to your favorites.
 
 View Favorites: Open the "Favorites" page to see saved recipes.
 
