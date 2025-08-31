@@ -3,7 +3,7 @@ import {Routes, Route} from 'react-router-dom'
 import About from './pages/About.jsx'
 import Favorites from './pages/Favorites.jsx'
 import Home from './pages/Home.jsx'
-import NotFound from './pages/NotFound.jsx'
+import NotFound from './pages/404.jsx'
 import Footer from './components/Footer.jsx'
 
 import './index.css'
