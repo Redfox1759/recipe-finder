@@ -32,7 +32,7 @@ const Favorites = () => {
         <h3 className="text-xl font-semibold mb-2"> {item.title} </h3>
         <img src={item.image} alt={item.title} className="w-full h-48 object-cover rounded-md mb-4" />
         <div className="text-sm space-y-1">
-          <p> Ready in <span className="font-medium">{item.readyInMinutes}</span> minutes </p>
+          <p> Ready in: <span className="font-medium">{item.readyInMinutes}</span> minutes </p>
           <p> Servings: <span className="font-medium">{item.servings}</span> </p>
           <p> Instructions: <span className="font-medium">{item.instructions}</span> </p>
         </div>
