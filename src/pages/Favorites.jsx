@@ -34,6 +34,7 @@ const Favorites = () => {
         <div className="text-sm space-y-1">
           <p> Ready in <span className="font-medium">{item.readyInMinutes}</span> minutes </p>
           <p> Servings: <span className="font-medium">{item.servings}</span> </p>
+           <span className="font-medium">{item.instructions}</span>
         </div>
       </div>
     )

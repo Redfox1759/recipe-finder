@@ -1,6 +1,6 @@
 import React from 'react'
 
-const NotFound = () => {
+const NotFound= () => {
       return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans p-4 flex items-center justify-center">
             <div className="max-w-3xl mx-auto py-8 text-center">
